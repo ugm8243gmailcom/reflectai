@@ -27,6 +27,9 @@ const stripGeneratedRouteTreeTypes = {
 
 export default defineConfig({
   plugins: [stripGeneratedRouteTreeTypes],
+  nitro: {
+    preset: "node-server",
+  },
   tanstackStart: {
     router: { disableTypes: true },
     // Redirect TanStack Start's bundled server entry to src/server.js (our SSR error wrapper).

@@ -21,6 +21,7 @@ import { Route as AppGoalsRouteImport } from './routes/app.goals'
 import { Route as AppCoachRouteImport } from './routes/app.coach'
 import { Route as AppCalendarRouteImport } from './routes/app.calendar'
 import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
+import { Route as ApiDbRouteImport } from './routes/api/db'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AppJournalIndexRouteImport } from './routes/app.journal.index'
 import { Route as AppJournalNewRouteImport } from './routes/app.journal.new'
@@ -86,6 +87,11 @@ const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => AppRoute,
 })
+const ApiDbRoute = ApiDbRouteImport.update({
+  id: '/api/db',
+  path: '/api/db',
+  getParentRoute: () => rootRouteImport,
+})
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -129,6 +135,7 @@ const rootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiDbRoute: ApiDbRoute,
 }
 export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)
 
