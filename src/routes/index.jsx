@@ -72,13 +72,13 @@ function Nav() {
         </div>
         <div className="flex items-center gap-2">
           <Link
-            to="/auth"
+            to="/app"
             className="hidden sm:inline-flex h-9 items-center rounded-full px-4 text-sm font-medium text-foreground hover:bg-muted"
           >
             Sign in
           </Link>
           <Link
-            to="/auth"
+            to="/app"
             className="inline-flex h-9 items-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90"
           >
             Start free
@@ -106,7 +106,7 @@ function Hero() {
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
-            to="/auth"
+            to="/app"
             className="w-full sm:w-auto inline-flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-7 text-sm font-bold text-primary-foreground shadow-premium hover:opacity-95"
           >
             Start journaling free
@@ -435,7 +435,7 @@ function Pricing() {
               ))}
             </ul>
             <Link
-              to="/auth"
+              to="/app"
               className="mt-8 w-full inline-flex h-11 items-center justify-center rounded-full border border-primary text-primary font-semibold"
             >
               Start free
@@ -467,7 +467,7 @@ function Pricing() {
               ))}
             </ul>
             <Link
-              to="/auth"
+              to="/app"
               className="mt-8 w-full inline-flex h-11 items-center justify-center rounded-full bg-card text-primary font-semibold"
             >
               Go premium
@@ -556,7 +556,7 @@ function CTA() {
             Three minutes a day. A clearer mind in a month.
           </p>
           <Link
-            to="/auth"
+            to="/app"
             className="mt-8 inline-flex h-12 items-center gap-2 rounded-full bg-card text-primary px-7 text-sm font-bold"
           >
             Begin journaling free
@@ -590,3 +590,4 @@ function Footer() {
     </footer>
   );
 }
+

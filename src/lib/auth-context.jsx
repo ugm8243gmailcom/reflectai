@@ -1,26 +1,26 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-const Ctx = createContext({ session: null, user: null, loading: true });
+import { createContext, useContext } from "react";
+
+const MOCK_USER = {
+  id: "local-user",
+  email: "user@reflectai.app",
+  user_metadata: { name: "You" },
+};
+
+const Ctx = createContext({
+  session: { user: MOCK_USER },
+  user: MOCK_USER,
+  loading: false,
+});
+
 export function AuthProvider({ children }) {
-  const [session, setSession] = useState(null);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
-      setSession(s);
-      setLoading(false);
-    });
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setLoading(false);
-    });
-    return () => sub.subscription.unsubscribe();
-  }, []);
   return (
-    <Ctx.Provider value={{ session, user: session?.user ?? null, loading }}>
+    <Ctx.Provider value={{ session: { user: MOCK_USER }, user: MOCK_USER, loading: false }}>
       {children}
     </Ctx.Provider>
   );
 }
+
 export function useAuth() {
   return useContext(Ctx);
 }
+
