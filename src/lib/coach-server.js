@@ -1,6 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import { generateText } from "ai";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { buildUserContext } from "./ai-context.server";
 
 export const askCoachAI = createServerFn({ method: "POST" })
@@ -9,12 +7,11 @@ export const askCoachAI = createServerFn({ method: "POST" })
     try {
       const { messages } = data;
       const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
-      
-      if (!apiKey) {
-        throw new Error("Missing GOOGLE_GENERATIVE_AI_API_KEY in environment variables (.env)");
+
+      if (!apiKey || !apiKey.trim()) {
+        throw new Error("Missing Gemini API key in .env file (GOOGLE_GENERATIVE_AI_API_KEY)");
       }
 
-      const google = createGoogleGenerativeAI({ apiKey });
       const userContext = await buildUserContext("local-user");
 
       const systemPrompt = `You are ReflectAI, a warm, highly perceptive personal-growth coach embedded inside the user's private digital journal.
@@ -31,21 +28,42 @@ GUIDELINES FOR YOUR RESPONSES:
 - End responses with one gentle, reflective question when appropriate to deepen their self-observation.
 - Never give medical advice or clinical diagnosis.`;
 
-      const formattedMessages = (messages || []).map((m) => {
+      const contents = (messages || []).map((m) => {
         const text = m.content || (m.parts ? m.parts.map((p) => p.text || "").join("") : "");
         return {
-          role: m.role === "assistant" ? "assistant" : "user",
-          content: text || "",
+          role: m.role === "assistant" ? "model" : "user",
+          parts: [{ text: text || "" }],
         };
       });
 
-      const response = await generateText({
-        model: google("gemini-1.5-flash"),
-        system: systemPrompt,
-        messages: formattedMessages,
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey.trim()}`;
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: {
+            parts: [{ text: systemPrompt }],
+          },
+          contents,
+        }),
       });
 
-      return { text: response.text };
+      const json = await res.json();
+
+      if (!res.ok || json.error) {
+        const msg = json.error?.message || `Google API error (Status ${res.status})`;
+        if (msg.includes("API key not valid") || msg.includes("API_KEY_INVALID")) {
+          throw new Error("Invalid Gemini API Key. Google AI Studio keys start with 'AIzaSy...'. Get a free key at https://aistudio.google.com/apikey");
+        }
+        throw new Error(msg);
+      }
+
+      const replyText =
+        json.candidates?.[0]?.content?.parts?.[0]?.text ||
+        "I'm listening and reflecting on what you said. Tell me more.";
+
+      return { text: replyText };
     } catch (err) {
       console.error("AI Coach Server Error:", err);
       throw new Error(err.message || "Failed to generate AI response");
